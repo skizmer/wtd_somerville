@@ -34,27 +34,6 @@ var map = L.map('map', {
 	layers: [street]
 });
 
-//add control features to map
-var baseMap = {
-	"Street": street,
-	"Satellite": sat,
-	"Hybrid": hyb
-};
-
-L.control.layers(baseMap).addTo(map);
-
-//event handlers
-var popup = L.popup();
-
-function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        .setContent("Coordinates at this location: " + e.latlng.toString())
-        .openOn(map);
-}
-
-map.on('click', onMapClick);
-
 //style geojson data
 var histStyle = {
 		radius: 5,
@@ -92,17 +71,41 @@ var historical = new L.geoJson(historical, {
 		return L.circleMarker(latlng, histStyle);
 	},
 	onEachFeature: onEachFeature
-}).addTo(map);
+});
 
 var activities = new L.geoJson(activities, {
 	pointToLayer: function (feature, latlng) {
 		return L.circleMarker(latlng, activityStyle);
 	},
 	onEachFeature: onEachFeature
-}).addTo(map);
+});
 
+//add control features to map
+var baseMap = {
+	"Street": street,
+	"Satellite": sat,
+	"Hybrid": hyb
+};
 
-//initialize popup function
+var overlayLayers = {
+	"Historical Sites": historical,
+	"Activities": activities
+};
+
+L.control.layers(baseMap, overlayLayers).addTo(map);
+
+//event handlers
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("Coordinates at this location: " + e.latlng.toString())
+        .openOn(map);
+}
+
+map.on('click', onMapClick);
+
 function onEachFeature(feature, layer) {
 	if (feature.properties) {
 		layer.bindPopup("Name: " + feature.properties.name + "</br>"
