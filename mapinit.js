@@ -29,7 +29,7 @@ var street = L.tileLayer(mapquestUrl, {
 		attribution: mqAttribution})]);
 
 var map = L.map('map', {
-	center: new L.LatLng(42.389, -71.1029),
+	center: new L.LatLng(42.3935, -71.1062),
 	zoom: 14,
 	layers: [street]
 });
@@ -55,7 +55,7 @@ function onMapClick(e) {
 
 map.on('click', onMapClick);
 
-//import geojson data
+//style geojson data
 var histStyle = {
 		radius: 5,
 	    fillColor: "#ff7800",
@@ -74,6 +74,19 @@ var activityStyle = {
 		fillOpacity: 0.8
 };
 
+var borderStyle = {
+		stroke: true,
+		color: "#111",
+		weight: 4,
+		fill: false,
+		clickable: false
+};
+
+//add geojson data to map
+L.geoJson(border, {
+	style: borderStyle
+}).addTo(map);
+
 var historical = new L.geoJson(historical, {
 	pointToLayer: function (feature, latlng) {
 		return L.circleMarker(latlng, histStyle);
@@ -88,6 +101,8 @@ var activities = new L.geoJson(activities, {
 	onEachFeature: onEachFeature
 }).addTo(map);
 
+
+//initialize popup function
 function onEachFeature(feature, layer) {
 	if (feature.properties) {
 		layer.bindPopup("Name: " + feature.properties.name + "</br>"
